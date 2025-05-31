@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 
 from dnn_lib_tf import *
+from tensorflow.python.framework.ops import EagerTensor
 
 # Load Datasets
 x_train_initial, y_train_initial, x_test_initial, y_test_initial = load_dataset()

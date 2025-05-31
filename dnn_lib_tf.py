@@ -106,3 +106,25 @@ def initialize_parameters():
     }
 
     return parameters
+
+
+def forward_propagation(X, parameters):
+    """
+    Implements the forward propagation for the model: LINEAR -> RELU -> LINEAR -> RELU -> LINEAR
+
+    Arguments:
+    X -- input dataset placeholder, of shape (input size, number of examples)
+    parameters -- python dictionary containing your parameters "W1", "b1", "W2", "b2", "W3", "b3"
+                  the shapes are given in initialize_parameters
+
+    Returns:
+    Z3 -- the output of the last LINEAR unit
+    """
+
+    Z1 = tf.math.add(tf.linalg.matmul(parameters["W1"], X), parameters["b1"])
+    A1 = tf.keras.activations.relu(Z1)
+    Z2 = tf.math.add(tf.linalg.matmul(parameters["W2"], A1), parameters["b2"])
+    A2 = tf.keras.activations.relu(Z2)
+    Z3 = tf.math.add(tf.linalg.matmul(parameters["W3"], A2), parameters["b3"])
+
+    return Z3
