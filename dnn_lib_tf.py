@@ -31,3 +31,10 @@ def load_dataset():
 
     return x_train, y_train, x_test, y_test
 
+
+def get_unique_labels(y_train):
+    unique_labels = set()
+    for element in y_train:
+        unique_labels.add(element.numpy())
+
+    return unique_labels
