@@ -51,3 +51,20 @@ def display_data(image_dataset, label_dataset):
         plt.title(next(labels_iter).numpy())
         plt.axis("off")
     plt.show()
+
+
+def unroll_and_normalize(image_dataset):
+    """
+    Transform an image into a tensor of shape (64 * 64 * 3, )
+    and normalize its components.
+
+    Arguments
+    image - Tensor.
+
+    Returns:
+    result -- Transformed tensor
+    """
+    result = tf.reshape(image_dataset, [-1,])
+    result = tf.cast(result, tf.float32) / 255.0
+
+    return result
