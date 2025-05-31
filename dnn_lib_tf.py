@@ -1,4 +1,5 @@
 import h5py
+import matplotlib.pyplot as plt
 import tensorflow as tf
 
 def load_dataset():
@@ -38,3 +39,15 @@ def get_unique_labels(y_train):
         unique_labels.add(element.numpy())
 
     return unique_labels
+
+def display_data(image_dataset, label_dataset):
+    images_iter = iter(image_dataset)
+    labels_iter = iter(label_dataset)
+
+    plt.figure(figsize=(7,7)) # size in inches
+    for i in range(25):
+        plt.subplot(5, 5, i + 1) # 5x5 grid, picture i
+        plt.imshow(next(images_iter))
+        plt.title(next(labels_iter).numpy())
+        plt.axis("off")
+    plt.show()
