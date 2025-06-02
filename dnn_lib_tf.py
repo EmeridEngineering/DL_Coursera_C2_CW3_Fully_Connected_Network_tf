@@ -128,3 +128,19 @@ def forward_propagation(X, parameters):
     Z3 = tf.math.add(tf.linalg.matmul(parameters["W3"], A2), parameters["b3"])
 
     return Z3
+
+
+def one_hot_encoding(label, C=6):
+    """
+    Computes the one hot encoding for a single label
+
+    Arguments:
+        label --  (int) Categorical labels
+        C --  (int) Number of different classes that label can take
+
+    Returns:
+        one_hot -- tf.Tensor A one-dimensional tensor (array) with the one hot encoding.
+    """
+
+    return tf.reshape(tf.one_hot(label, C), shape=[C,]) # reshape for confidence as one_hot shape depends on the inputs
+
