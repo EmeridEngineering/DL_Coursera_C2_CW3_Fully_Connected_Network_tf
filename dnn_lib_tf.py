@@ -160,3 +160,71 @@ def compute_total_loss(logits, labels):
     total_loss = tf.reduce_sum(tf.keras.losses.categorical_crossentropy(tf.transpose(labels), tf.transpose(logits), from_logits = True))
 
     return total_loss
+
+
+def train_deep_fully_connected_model_tf(x_train, y_train, x_test, y_test, learning_rate = 0.0001, num_epochs = 1500, minibatch_size = 32, print_cost = True):
+    """
+    Implements a three-layer tensorflow neural network: LINEAR->RELU->LINEAR->RELU->LINEAR->SOFTMAX.
+
+    Arguments:
+    X_train -- training set, of shape (input size = 12288, number of training examples = 1080)
+    Y_train -- test set, of shape (output size = 6, number of training examples = 1080)
+    X_test -- training set, of shape (input size = 12288, number of training examples = 120)
+    Y_test -- test set, of shape (output size = 6, number of test examples = 120)
+    learning_rate -- learning rate of the optimization
+    num_epochs -- number of epochs of the optimization loop
+    minibatch_size -- size of a minibatch
+    print_cost -- True to print the cost every 10 epochs
+
+    Returns:
+    parameters, costs, train_accuracies, test_accuracies -- parameters learnt by the model. They can then be used to predict.
+    """
+
+    costs = []
+    train_accuracies = []
+    test_accuracies = []
+
+    # Initialize parameters
+    parameters = initialize_parameters()
+
+    # Join x and y into pairs to create a batch
+    train_dataset = tf.data.Dataset.zip((x_train, y_train))
+
+    # Get the number of examples in train dataset
+    m = train_dataset.cardinality().numpy()
+
+    optimizer = tf.keras.optimizers.Adam(learning_rate)
+
+    for i_epoch in range(num_epochs):
+        epoch_total_cost = 0.
+
+        minibatches = train_dataset.batch(minibatch_size).prefetch(8)
+
+        for (minibatch_x, minibatch_y) in minibatches:
+
+            with tf.GradientTape() as tape:
+
+                # Forward propagation
+                Z3 = forward_propagation(tf.transpose(minibatch_x), parameters)
+
+                # Calculate the activations and loss at one step
+                minibatch_total_loss = compute_total_loss(Z3, tf.transpose(minibatch_y)) # consider removing the transpose
+
+            trainable_variables = [parameters["W1"], parameters["b1"], parameters["W2"], parameters["b2"], parameters["W3"], parameters["b3"]]
+
+            grads = tape.gradient(minibatch_total_loss, trainable_variables)
+
+            optimizer.apply_gradients(zip(grads, trainable_variables))
+
+            epoch_total_cost += minibatch_total_loss
+
+        # Average the loss over the number of examples
+        epoch_total_cost /= m
+
+        if print_cost == True and i_epoch % 10 == 0:
+            print("Cost after epoch %i: %f" % (i_epoch, epoch_total_cost))
+
+            costs.append(epoch_total_cost)
+
+
+    return parameters, costs, train_accuracies, test_accuracies

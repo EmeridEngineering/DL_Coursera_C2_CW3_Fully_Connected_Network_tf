@@ -27,3 +27,5 @@ y_train = y_train_initial.map(one_hot_encoding)
 y_test = y_test_initial.map(one_hot_encoding)
 
 # print(next(iter(y_test)))
+
+parameters, costs, train_accuracies, test_accuracies = train_deep_fully_connected_model_tf(x_train, y_train, x_test, y_test, num_epochs = 100)
