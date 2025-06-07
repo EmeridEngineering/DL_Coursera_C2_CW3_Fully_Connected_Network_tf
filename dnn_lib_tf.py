@@ -228,3 +228,13 @@ def train_deep_fully_connected_model_tf(x_train, y_train, x_test, y_test, learni
 
 
     return parameters, costs, train_accuracies, test_accuracies
+
+
+def plot_costs(costs):
+    # Plot the cost
+    plt.figure()
+    plt.plot(np.squeeze(costs))
+    plt.ylabel('cost')
+    plt.xlabel('iterations (per tens)')
+    plt.title("Learning rate =" + str(0.0001))
+    plt.show()
