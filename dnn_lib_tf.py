@@ -193,12 +193,19 @@ def train_deep_fully_connected_model_tf(x_train, y_train, x_test, y_test, learni
     # Get the number of examples in train dataset
     m = train_dataset.cardinality().numpy()
 
+    # Define the optimization method
     optimizer = tf.keras.optimizers.Adam(learning_rate)
+
+    # Define metrics for accuracy
+    train_accuracy = tf.keras.metrics.CategoricalAccuracy()
 
     for i_epoch in range(num_epochs):
         epoch_total_cost = 0.
 
         minibatches = train_dataset.batch(minibatch_size).prefetch(8)
+
+        # Reset the accuracy to measure it for each epoch
+        train_accuracy.reset_state()
 
         for (minibatch_x, minibatch_y) in minibatches:
 
@@ -210,21 +217,29 @@ def train_deep_fully_connected_model_tf(x_train, y_train, x_test, y_test, learni
                 # Calculate the activations and loss at one step
                 minibatch_total_loss = compute_total_loss(Z3, tf.transpose(minibatch_y)) # consider removing the transpose
 
+            # Define trainable variables
             trainable_variables = [parameters["W1"], parameters["b1"], parameters["W2"], parameters["b2"], parameters["W3"], parameters["b3"]]
 
+            # Calculate gradients
             grads = tape.gradient(minibatch_total_loss, trainable_variables)
 
+            # Update parameters
             optimizer.apply_gradients(zip(grads, trainable_variables))
 
+            # Accumulate the accuracy and loos from all the batches
             epoch_total_cost += minibatch_total_loss
+            train_accuracy.update_state(minibatch_y, tf.transpose(Z3))
 
         # Average the loss over the number of examples
         epoch_total_cost /= m
 
         if print_cost == True and i_epoch % 10 == 0:
             print("Cost after epoch %i: %f" % (i_epoch, epoch_total_cost))
+            print("Train accuracy: %f" % (train_accuracy.result()))
 
+            # Log cost and accuracy
             costs.append(epoch_total_cost)
+            train_accuracies.append(train_accuracy.result())
 
 
     return parameters, costs, train_accuracies, test_accuracies
