@@ -249,6 +249,7 @@ def train_deep_fully_connected_model_tf(x_train, y_train, x_test, y_test, learni
             # Log cost and accuracy
             costs.append(epoch_total_cost)
             train_accuracies.append(train_accuracy.result())
+            test_accuracies.append(test_accuracy.result())
 
 
     return parameters, costs, train_accuracies, test_accuracies
@@ -261,4 +262,18 @@ def plot_costs(costs):
     plt.ylabel('cost')
     plt.xlabel('iterations (per tens)')
     plt.title("Learning rate =" + str(0.0001))
+    plt.show()
+
+
+def plot_accuracies(train_accuracies, test_accuracies):
+    plt.figure()
+    # Plot the train accuracy
+    plt.plot(np.squeeze(train_accuracies))
+    # Plot the test accuracy
+    plt.plot(np.squeeze(test_accuracies))
+
+    plt.ylabel('Accuracies')
+    plt.xlabel('iterations (per ten)')
+    plt.title("Learning rate =" + str(0.0001))
+
     plt.show()

@@ -33,3 +33,6 @@ parameters, costs, train_accuracies, test_accuracies = train_deep_fully_connecte
 
 # Analyze the cost over iterations
 plot_costs(costs)
+
+# Analyze the train and test(dev) accuracy over iterations
+plot_accuracies(train_accuracies, test_accuracies)
