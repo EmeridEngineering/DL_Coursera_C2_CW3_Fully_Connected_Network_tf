@@ -189,6 +189,7 @@ def train_deep_fully_connected_model_tf(x_train, y_train, x_test, y_test, learni
 
     # Join x and y into pairs to create a batch
     train_dataset = tf.data.Dataset.zip((x_train, y_train))
+    test_dataset = tf.data.Dataset.zip((x_test, y_test))
 
     # Get the number of examples in train dataset
     m = train_dataset.cardinality().numpy()
@@ -198,6 +199,7 @@ def train_deep_fully_connected_model_tf(x_train, y_train, x_test, y_test, learni
 
     # Define metrics for accuracy
     train_accuracy = tf.keras.metrics.CategoricalAccuracy()
+    test_accuracy = tf.keras.metrics.CategoricalAccuracy()
 
     for i_epoch in range(num_epochs):
         epoch_total_cost = 0.
@@ -236,6 +238,13 @@ def train_deep_fully_connected_model_tf(x_train, y_train, x_test, y_test, learni
         if print_cost == True and i_epoch % 10 == 0:
             print("Cost after epoch %i: %f" % (i_epoch, epoch_total_cost))
             print("Train accuracy: %f" % (train_accuracy.result()))
+
+            # Evaluate test performance every 10 epochs
+            test_minibatches = test_dataset.batch(minibatch_size).prefetch(8)
+            for (test_minibatch_x, test_minibatch_y) in test_minibatches:
+                Z3 = forward_propagation(tf.transpose(test_minibatch_x), parameters)
+                test_accuracy.update_state(test_minibatch_y, tf.transpose(Z3))
+            print("Test accuracy %f" % test_accuracy.result())
 
             # Log cost and accuracy
             costs.append(epoch_total_cost)
